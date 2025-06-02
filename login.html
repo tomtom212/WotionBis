@@ -52,7 +52,7 @@
             const errorMessage = document.getElementById('error-message');
             
             // Get users from localStorage
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const users = JSON.parse(localStorage.getItem('users.txt') || '[]');
             
             // Find user
             const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
