@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wotion - A Modern To-Do List for Students</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="main-header">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <div class="logo-left"></div>
+                        <div class="logo-center"></div>
+                        <div class="logo-right"></div>
+                    </div>
+                    <span class="logo-text">Wotion</span>
+                </a>
+                <nav class="main-nav">
+                    <a href="#features">Features</a>
+                    <a href="#testimonials">Testimonials</a>
+                    <a href="#pricing">Pricing</a>
+                </nav>
+                <div class="auth-buttons">
+                    <a href="login.html" class="btn btn-outline">Log In</a>
+                    <a href="signup.html" class="btn btn-primary">Sign Up</a>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="hero">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1>Simplify Your Student Life with Wotion</h1>
+                        <p>A streamlined to-do list app designed specifically for students and by ECAM Lasalle Students. Organize tasks, track assignments, and boost your productivity.</p>
+                        <div class="hero-buttons">
+                            <a href="signup.html" class="btn btn-primary">Get Started Free <span class="arrow-right">→</span></a>
+                            <a href="robot.html" class="btn btn-outline">See Demo</a>
+                        </div>
+                    </div>
+                    <div class="hero-image">
+                        <div class="large-logo">
+                            <div class="logo-left"></div>
+                            <div class="logo-center"></div>
+                            <div class="logo-right"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="features" class="features">
+                <div class="section-header">
+                    <span class="badge">Features</span>
+                    <h2>Designed for the Success of Java Teachers and Students</h2>
+                    <p>Everything you need to stay organized and on top of your academic responsibilities.</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <img src="icon1.png" width="70" height="70" alt="Task Management Icon" />
+                        </div>
+                        <h3>Simple Task Management</h3>
+                        <p>Create, organize, and complete tasks with an intuitive interface that's easier to use than Notion.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <img src="icon2.png" width="70" height="70" alt="Assignment Tracking Icon" />
+                        </div>
+                        <h3>Assignment Tracking</h3>
+                        <p>Never miss a deadline with built-in due date reminders and priority indicators.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <img src="icon3.png" width="70" height="70" alt="Course Organization Icon" />
+                        </div>
+                        <h3>Course Organization</h3>
+                        <p>Group tasks by course to keep your academic responsibilities neatly organized.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="cta">
+                <div class="cta-content">
+                    <div class="cta-text">
+                        <span class="badge">Get Started Today</span>
+                        <h2>Ready to simplify your student life?</h2>
+                        <p>Join three students who are already using Wotion to stay organized and boost their productivity.</p>
+                        <a href="signup.html" class="btn btn-primary">Sign Up Free</a>
+                    </div>
+                    <div class="cta-benefits">
+                        <ul>
+                            <li><span class="check-icon">✓</span> No credit card required</li>
+                            <li><span class="check-icon">✓</span> Free plan available forever</li>
+                            <li><span class="check-icon">✓</span> Access on all your devices</li>
+                            <li><span class="check-icon">✓</span> Cancel anytime</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <div class="logo-icon">
+                        <div class="logo-left"></div>
+                        <div class="logo-center"></div>
+                        <div class="logo-right"></div>
+                    </div>
+                    <span class="logo-text">Wotion</span>
+                </div>
+                <nav class="footer-nav">
+                    <a href="#">Terms</a>
+                    <a href="#">Privacy</a>
+                    <a href="#">Contact</a>
+                </nav>
+                <div class="footer-copyright">
+                    <p>&copy; <span id="current-year"></span> Tom Daval-Pommier Augustin Chèze Tibald Delomier.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html> 

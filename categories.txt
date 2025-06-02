@@ -1,0 +1,19 @@
+
+noe.sicard@icloud.com|Math|#ef4444
+noe.sicard@icloud.com|Physics|#3b82f6
+noe.sicard@icloud.com|Literature|#22c55e
+noe.sicard@icloud.com|Computer Science|#a21caf
+noe.sicard@icloud.com|Sport|#8d8600
+bdaval@gmail.com|Physics|#3b82f6
+bdaval@gmail.com|Literature|#22c55e
+bdaval@gmail.com|Computer Science|#ff6251
+bdaval@gmail.com|Sport|#e32400
+m.example@me.com|Math|#ef4444
+m.example@me.com|Physics|#3b82f6
+m.example@me.com|Literature|#22c55e
+m.example@me.com|Computer Science|#a21caf
+tdaval@gmail.com|Futurama|#ff40ff
+tdaval@gmail.com|DevLog Avancé|#3b82f6
+tdaval@gmail.com|Cinéma|#22c55e
+tdaval@gmail.com|Web|#a21caf
+tdaval@gmail.com|v|#3b82f6

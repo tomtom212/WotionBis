@@ -1,0 +1,8 @@
+tomdaval@gmail.com|f|Mathematics|gg
+tdaval@gmail.com|g|Mathematics|v
+tdaval@gmail.com|g|Mathematics|v
+tdaval@gmail.com|ff|Physics|g
+noe.sicard@icloud.com|Séance 1|Sport|2025-05-14|1
+m.example@me.com|regarder borat|Computer Science|2025-05-07|1
+tdaval@gmail.com|car|Cinéma|2025-05-13|1
+tdaval@gmail.com|c|Cinéma|2025-05-23|0

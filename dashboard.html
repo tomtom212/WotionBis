@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Wotion</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dashboard-page">
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <div class="logo-left"></div>
+                    <div class="logo-center"></div>
+                    <div class="logo-right"></div>
+                </div>
+                <span class="logo-text">Wotion</span>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="active" data-filter="all">All Tasks</a>
+                <a href="#" data-filter="today">Today</a>
+                <a href="#" data-filter="upcoming">Upcoming</a>
+            </nav>
+            
+            <div class="courses-section">
+                <div class="courses-header">
+                    <h3>Courses</h3>
+                    <button class="btn-icon" id="addCourseBtn">+</button>
+                </div>
+                <div id="coursesList" class="courses-list">
+                    <!-- Courses will be populated here -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search tasks...">
+                </div>
+                <div class="user-menu">
+                    <span id="userName"></span>
+                    <button class="btn-icon" id="logoutBtn">Logout</button>
+                </div>
+            </header>
+
+            <div class="tasks-container">
+                <div class="tasks-header">
+                    <div class="tasks-tabs">
+                        <button class="tab-btn active" data-tab="all">All</button>
+                        <button class="tab-btn" data-tab="active">Active</button>
+                        <button class="tab-btn" data-tab="completed">Completed</button>
+                    </div>
+                    <button class="btn btn-primary" id="addTaskBtn">Add Task</button>
+                </div>
+
+                <div id="tasksList" class="tasks-list">
+                    <!-- Tasks will be populated here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Task Modal -->
+    <div id="addTaskModal" class="modal">
+        <div class="modal-content">
+            <h2>Add New Task</h2>
+            <form id="addTaskForm">
+                <div class="form-group">
+                    <label for="taskTitle">Task Title</label>
+                    <input type="text" id="taskTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="taskCourse">Course</label>
+                    <select id="taskCourse" required>
+                        <!-- Courses will be populated here -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="taskDue">Due Date</label>
+                    <input type="date" id="taskDue" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('addTaskModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Course Modal -->
+    <div id="addCourseModal" class="modal">
+        <div class="modal-content">
+            <h2>Add New Course</h2>
+            <form id="addCourseForm">
+                <div class="form-group">
+                    <label for="courseName">Course Name</label>
+                    <input type="text" id="courseName" required>
+                </div>
+                <div class="form-group">
+                    <label for="courseColor">Color</label>
+                    <input type="color" id="courseColor" value="#3b82f6" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('addCourseModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Course</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is logged in
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
+            window.location.href = 'login.html';
+        }
+
+        // Initialize data
+        let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+        let courses = JSON.parse(localStorage.getItem('courses') || '[]');
+
+        // Set default courses if none exist
+        if (courses.length === 0) {
+            courses = [
+                { name: 'Futurama', color: '#ef4444' },
+                { name: 'DevLog Avancé', color: '#3b82f6' },
+                { name: 'Cinéma', color: '#22c55e' },
+                { name: 'Web', color: '#a21caf' }
+            ];
+            localStorage.setItem('courses', JSON.stringify(courses));
+        }
+
+        // DOM Elements
+        const userNameElement = document.getElementById('userName');
+        const tasksListElement = document.getElementById('tasksList');
+        const coursesListElement = document.getElementById('coursesList');
+        const searchInput = document.getElementById('searchInput');
+        const addTaskBtn = document.getElementById('addTaskBtn');
+        const addCourseBtn = document.getElementById('addCourseBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // Set user name
+        userNameElement.textContent = `${currentUser.firstName} ${currentUser.lastName}`;
+
+        // Event Listeners
+        addTaskBtn.addEventListener('click', () => openModal('addTaskModal'));
+        addCourseBtn.addEventListener('click', () => openModal('addCourseModal'));
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        });
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderTasks();
+            });
+        });
+
+        // Sidebar filter
+        document.querySelectorAll('.sidebar-nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+                link.classList.add('active');
+                renderTasks();
+            });
+        });
+
+        // Search functionality
+        searchInput.addEventListener('input', renderTasks);
+
+        // Add Task Form
+        document.getElementById('addTaskForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = document.getElementById('taskTitle').value;
+            const course = document.getElementById('taskCourse').value;
+            const due = document.getElementById('taskDue').value;
+
+            tasks.push({
+                id: Date.now(),
+                title,
+                course,
+                due,
+                completed: false,
+                userId: currentUser.email
+            });
+
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            closeModal('addTaskModal');
+            renderTasks();
+            e.target.reset();
+        });
+
+        // Add Course Form
+        document.getElementById('addCourseForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('courseName').value;
+            const color = document.getElementById('courseColor').value;
+
+            courses.push({ name, color });
+            localStorage.setItem('courses', JSON.stringify(courses));
+            closeModal('addCourseModal');
+            renderCourses();
+            renderTasks();
+            e.target.reset();
+        });
+
+        // Render functions
+        function renderTasks() {
+            const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+            const activeFilter = document.querySelector('.sidebar-nav a.active').dataset.filter;
+            const searchTerm = searchInput.value.toLowerCase();
+
+            let filteredTasks = tasks.filter(task => task.userId === currentUser.email);
+
+            // Apply tab filter
+            if (activeTab === 'active') {
+                filteredTasks = filteredTasks.filter(task => !task.completed);
+            } else if (activeTab === 'completed') {
+                filteredTasks = filteredTasks.filter(task => task.completed);
+            }
+
+            // Apply sidebar filter
+            if (activeFilter === 'today') {
+                const today = new Date().toISOString().split('T')[0];
+                filteredTasks = filteredTasks.filter(task => task.due === today);
+            } else if (activeFilter === 'upcoming') {
+                const today = new Date().toISOString().split('T')[0];
+                filteredTasks = filteredTasks.filter(task => task.due > today);
+            }
+
+            // Apply search filter
+            if (searchTerm) {
+                filteredTasks = filteredTasks.filter(task => 
+                    task.title.toLowerCase().includes(searchTerm) ||
+                    task.course.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            tasksListElement.innerHTML = filteredTasks.map(task => `
+                <div class="task-item ${task.completed ? 'completed' : ''}">
+                    <div class="task-content">
+                        <input type="checkbox" ${task.completed ? 'checked' : ''} 
+                            onchange="toggleTask(${task.id})">
+                        <div class="task-info">
+                            <h3>${task.title}</h3>
+                            <span class="course-badge" style="background-color: ${getCourseColor(task.course)}">
+                                ${task.course}
+                            </span>
+                            <span class="due-date">${formatDate(task.due)}</span>
+                        </div>
+                    </div>
+                    <div class="task-actions">
+                        <button class="btn-icon" onclick="editTask(${task.id})">✎</button>
+                        <button class="btn-icon" onclick="deleteTask(${task.id})">×</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderCourses() {
+            coursesListElement.innerHTML = courses.map(course => `
+                <div class="course-item">
+                    <span class="course-color" style="background-color: ${course.color}"></span>
+                    <span class="course-name">${course.name}</span>
+                    <div class="course-actions">
+                        <button class="btn-icon" onclick="editCourse('${course.name}')">✎</button>
+                        <button class="btn-icon" onclick="deleteCourse('${course.name}')">×</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Update course select in add task modal
+            const courseSelect = document.getElementById('taskCourse');
+            courseSelect.innerHTML = courses.map(course => 
+                `<option value="${course.name}">${course.name}</option>`
+            ).join('');
+        }
+
+        // Helper functions
+        function getCourseColor(courseName) {
+            const course = courses.find(c => c.name === courseName);
+            return course ? course.color : '#3b82f6';
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        function toggleTask(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                task.completed = !task.completed;
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                renderTasks();
+            }
+        }
+
+        function deleteTask(taskId) {
+            if (confirm('Are you sure you want to delete this task?')) {
+                tasks = tasks.filter(t => t.id !== taskId);
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                renderTasks();
+            }
+        }
+
+        function deleteCourse(courseName) {
+            if (confirm('Are you sure you want to delete this course?')) {
+                courses = courses.filter(c => c.name !== courseName);
+                localStorage.setItem('courses', JSON.stringify(courses));
+                renderCourses();
+                renderTasks();
+            }
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Initial render
+        renderCourses();
+        renderTasks();
+    </script>
+</body>
+</html> 
