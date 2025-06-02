@@ -52,7 +52,7 @@
     </div>
 
     <script>
-        document.getElementById('signupForm').addEventListener('submit', function(e) {
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const firstName = document.getElementById('firstName').value;
@@ -61,43 +61,52 @@
             const password = document.getElementById('password').value;
             const errorMessage = document.getElementById('error-message');
             
-            // Validate ECAM email
-            if (!email.toLowerCase().endsWith('@ecam.be')) {
-                errorMessage.textContent = 'Please use your ECAM email address.';
+            try {
+                // Fetch existing users
+                const response = await fetch('users.txt');
+                const text = await response.text();
+                const lines = text.split('\n').filter(line => line.trim());
+                
+                // Check if email already exists
+                if (lines.some(line => {
+                    const [, , userEmail] = line.split('|');
+                    return userEmail.toLowerCase() === email.toLowerCase();
+                })) {
+                    errorMessage.textContent = 'An account with this email already exists.';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+                
+                // Add new user
+                const newUser = `${firstName}|${lastName}|${email}|${password}\n`;
+                
+                // Send the new user data to a server endpoint
+                const addUserResponse = await fetch('add_user.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `user=${encodeURIComponent(newUser)}`
+                });
+                
+                if (addUserResponse.ok) {
+                    // Store user session
+                    localStorage.setItem('currentUser', JSON.stringify({
+                        email,
+                        firstName,
+                        lastName
+                    }));
+                    
+                    // Redirect to dashboard
+                    window.location.href = 'dashboard.html';
+                } else {
+                    throw new Error('Failed to add user');
+                }
+            } catch (error) {
+                errorMessage.textContent = 'Error creating account. Please try again.';
                 errorMessage.style.display = 'block';
-                return;
+                console.error('Error:', error);
             }
-            
-            // Get existing users
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-            
-            // Check if email already exists
-            if (users.some(user => user.email.toLowerCase() === email.toLowerCase())) {
-                errorMessage.textContent = 'An account with this email already exists.';
-                errorMessage.style.display = 'block';
-                return;
-            }
-            
-            // Add new user
-            users.push({
-                firstName,
-                lastName,
-                email,
-                password
-            });
-            
-            // Save users
-            localStorage.setItem('users', JSON.stringify(users));
-            
-            // Store user session
-            localStorage.setItem('currentUser', JSON.stringify({
-                email,
-                firstName,
-                lastName
-            }));
-            
-            // Redirect to dashboard
-            window.location.href = 'dashboard.html';
         });
     </script>
 </body>
